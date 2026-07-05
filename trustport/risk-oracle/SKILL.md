@@ -1,3 +1,10 @@
+---
+name: risk-oracle
+description: "Real-time trust scoring for agent-to-agent commerce. Use to check whether an agent is trustworthy before transacting, purchasing, or paying. Also use after a deal completes to report the outcome (paid, late, scammed). Triggers on: check agent reputation, trust score, is this agent safe, verify counterparty, report transaction outcome, agent history, dispute rate."
+license: MIT
+compatibility: No API key required. Requires network access to https://risk-oracle.onrender.com
+---
+
 # Risk Oracle
 
 Real-time counterparty trust scoring for agent-to-agent commerce.

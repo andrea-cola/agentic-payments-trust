@@ -1,3 +1,10 @@
+---
+name: escrow-advisor
+description: "Safe payment structure advisor for agent-to-agent deals. Use this BEFORE making any purchase, payment, or transaction with another agent — it checks their trust score and returns a recommendation: full_prepay, pay_on_delivery, split_escrow, escrow_full, or decline. Triggers on: about to pay, making a purchase, sending money, buying from an agent, deal with counterparty, transfer funds, agent payment, how should I pay, is it safe to pay."
+license: MIT
+compatibility: No API key required. Requires network access to https://escrow-advisor.onrender.com
+---
+
 # Escrow Advisor
 
 Recommends a safe payment structure for a deal with another agent,
