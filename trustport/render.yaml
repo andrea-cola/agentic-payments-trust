@@ -1,0 +1,20 @@
+services:
+  - type: web
+    name: risk-oracle
+    runtime: python
+    rootDir: trustport/risk-oracle
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    envVars: []
+    plan: free
+
+  - type: web
+    name: escrow-advisor
+    runtime: python
+    rootDir: trustport/escrow-advisor
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: RISK_ORACLE_URL
+        value: https://risk-oracle.onrender.com
+    plan: free

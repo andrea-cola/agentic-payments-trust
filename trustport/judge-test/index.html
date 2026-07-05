@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TrustPort — Judge Test</title>
+<style>
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --border: #30363d;
+    --text: #c9d1d9;
+    --text-muted: #8b949e;
+    --accent: #f0883e;
+    --green: #3fb950;
+    --red: #f85149;
+    --blue: #58a6ff;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 2rem;
+  }
+  .container { max-width: 800px; margin: 0 auto; }
+  h1 {
+    font-size: 2rem;
+    margin-bottom: 0.25rem;
+    color: #fff;
+  }
+  h1 span { color: var(--accent); }
+  .subtitle {
+    color: var(--text-muted);
+    margin-bottom: 2rem;
+    font-size: 1.05rem;
+    line-height: 1.5;
+  }
+  .services {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+  .service-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.25rem;
+  }
+  .service-card h3 {
+    color: var(--blue);
+    margin-bottom: 0.5rem;
+    font-size: 0.95rem;
+  }
+  .service-card p {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+  .composability {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1rem 1.25rem;
+    margin-bottom: 2rem;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    line-height: 1.5;
+  }
+  .composability strong { color: var(--accent); }
+  .run-btn {
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    padding: 0.75rem 2rem;
+    font-size: 1rem;
+    font-weight: 600;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-bottom: 1.5rem;
+    transition: opacity 0.15s;
+  }
+  .run-btn:hover { opacity: 0.85; }
+  .run-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+  .terminal {
+    background: #010409;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.25rem;
+    font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+    font-size: 0.82rem;
+    line-height: 1.6;
+    white-space: pre-wrap;
+    word-break: break-word;
+    min-height: 120px;
+    max-height: 600px;
+    overflow-y: auto;
+    color: var(--text-muted);
+  }
+  .badge {
+    display: inline-block;
+    padding: 0.3rem 1rem;
+    border-radius: 4px;
+    font-weight: 700;
+    font-size: 1rem;
+    margin-top: 0.5rem;
+  }
+  .badge.pass { background: var(--green); color: #fff; }
+  .badge.fail { background: var(--red); color: #fff; }
+  .step-label { color: var(--blue); }
+  .step-ok { color: var(--green); }
+  .step-err { color: var(--red); }
+  @media (max-width: 600px) {
+    .services { grid-template-columns: 1fr; }
+    body { padding: 1rem; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>Trust<span>Port</span></h1>
+  <p class="subtitle">
+    Two composable trust-scoring services for agent-to-agent commerce.
+    An AI agent reads the SKILL.md, queries a counterparty's reputation,
+    and gets a payment-structure recommendation — no human help needed.
+  </p>
+
+  <div class="services">
+    <div class="service-card">
+      <h3>Service A — Risk Oracle</h3>
+      <p>
+        Real-time trust scoring. Query any agent ID to get their transaction
+        history, dispute rate, and risk tier (low / medium / high).
+        Report outcomes to keep scores accurate.
+      </p>
+    </div>
+    <div class="service-card">
+      <h3>Service B — Escrow Advisor</h3>
+      <p>
+        Payment-structure recommendations. Given a counterparty and deal
+        amount, returns whether to prepay, split-escrow, full-escrow,
+        or decline — powered by Risk Oracle under the hood.
+      </p>
+    </div>
+  </div>
+
+  <div class="composability">
+    <strong>Composability:</strong> Escrow Advisor calls Risk Oracle as its
+    backend. An agent only needs to call one endpoint to get a complete
+    recommendation backed by live reputation data.
+  </div>
+
+  <button class="run-btn" id="runBtn" onclick="runTest()">Run the judge test</button>
+
+  <div class="terminal" id="output">Click "Run the judge test" to start…</div>
+</div>
+
+<script>
+const RISK_URL   = "https://risk-oracle.onrender.com";
+const ESCROW_URL = "https://escrow-advisor.onrender.com";
+const output     = document.getElementById("output");
+const runBtn     = document.getElementById("runBtn");
+
+function log(text, cls) {
+  const span = document.createElement("span");
+  if (cls) span.className = cls;
+  span.textContent = text + "\n";
+  output.appendChild(span);
+  output.scrollTop = output.scrollHeight;
+}
+
+async function fetchJSON(url, opts) {
+  const res = await fetch(url, opts);
+  if (!res.ok) throw new Error(`HTTP ${res.status} from ${url}`);
+  return res.json();
+}
+
+async function runTest() {
+  output.innerHTML = "";
+  runBtn.disabled = true;
+  let passed = true;
+
+  try {
+    // A — List agents
+    log("--- A. List agents ---", "step-label");
+    const agents = await fetchJSON(`${RISK_URL}/agents`);
+    log(JSON.stringify(agents, null, 2));
+    if (!Array.isArray(agents.agents) || agents.agents.length < 10) throw new Error("Expected >= 10 agents");
+    log("✓ OK", "step-ok");
+
+    // B — Score trustworthy agent
+    log("\n--- B. Score a trustworthy agent (agent-042) ---", "step-label");
+    const trusted = await fetchJSON(`${RISK_URL}/score/agent-042`);
+    log(JSON.stringify(trusted, null, 2));
+    if (trusted.tier !== "low") throw new Error(`Expected tier 'low', got '${trusted.tier}'`);
+    log("✓ OK", "step-ok");
+
+    // C — Score risky agent
+    log("\n--- C. Score a risky agent (agent-666) ---", "step-label");
+    const risky = await fetchJSON(`${RISK_URL}/score/agent-666`);
+    log(JSON.stringify(risky, null, 2));
+    if (risky.tier !== "high") throw new Error(`Expected tier 'high', got '${risky.tier}'`);
+    log("✓ OK", "step-ok");
+
+    // D — Escrow advice
+    log("\n--- D. Get escrow advice for risky agent ---", "step-label");
+    const advice = await fetchJSON(`${ESCROW_URL}/advise`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        counterparty_id: "agent-666",
+        deal_amount_usd: 500,
+        deal_description: "test deal"
+      })
+    });
+    log(JSON.stringify(advice, null, 2));
+    if (!["escrow_full", "decline"].includes(advice.recommendation)) {
+      throw new Error(`Expected escrow_full or decline, got '${advice.recommendation}'`);
+    }
+    log("✓ OK", "step-ok");
+
+    // E — Report outcome
+    log("\n--- E. Report a successful outcome for agent-042 ---", "step-label");
+    const reported = await fetchJSON(`${RISK_URL}/report`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ agent_id: "agent-042", outcome: "paid" })
+    });
+    log(JSON.stringify(reported, null, 2));
+    if (reported.unknown_agent !== false) throw new Error("Expected unknown_agent=false");
+    log("✓ OK", "step-ok");
+
+  } catch (err) {
+    log(`\n✗ ${err.message}`, "step-err");
+    passed = false;
+  }
+
+  log("");
+  const badge = document.createElement("span");
+  badge.className = `badge ${passed ? "pass" : "fail"}`;
+  badge.textContent = passed ? "PASS" : "FAIL";
+  output.appendChild(badge);
+  output.appendChild(document.createTextNode("\n"));
+
+  runBtn.disabled = false;
+}
+</script>
+</body>
+</html>

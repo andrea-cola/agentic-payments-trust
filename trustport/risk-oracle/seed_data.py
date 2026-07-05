@@ -1,0 +1,17 @@
+SEED_AGENTS: dict[str, dict] = {
+    "agent-042": {"tx_count": 34, "disputes": 1, "age_days": 210, "counterparty_diversity": 22},
+    "agent-666": {"tx_count": 3, "disputes": 5, "age_days": 3, "counterparty_diversity": 1},
+    "agent-101": {"tx_count": 120, "disputes": 2, "age_days": 400, "counterparty_diversity": 45},
+    "agent-007": {"tx_count": 55, "disputes": 0, "age_days": 365, "counterparty_diversity": 30},
+    "agent-013": {"tx_count": 2, "disputes": 4, "age_days": 1, "counterparty_diversity": 0},
+    "agent-200": {"tx_count": 12, "disputes": 5, "age_days": 30, "counterparty_diversity": 4},
+    "agent-314": {"tx_count": 50, "disputes": 5, "age_days": 180, "counterparty_diversity": 15},
+    "agent-404": {"tx_count": 0, "disputes": 0, "age_days": 1, "counterparty_diversity": 0},
+    "agent-500": {"tx_count": 70, "disputes": 3, "age_days": 300, "counterparty_diversity": 25},
+    "agent-808": {"tx_count": 25, "disputes": 1, "age_days": 90, "counterparty_diversity": 12},
+    "agent-999": {"tx_count": 200, "disputes": 0, "age_days": 730, "counterparty_diversity": 50},
+    "agent-111": {"tx_count": 10, "disputes": 2, "age_days": 30, "counterparty_diversity": 5},
+    "agent-222": {"tx_count": 10, "disputes": 5, "age_days": 20, "counterparty_diversity": 3},
+    "agent-333": {"tx_count": 6, "disputes": 0, "age_days": 5, "counterparty_diversity": 3},
+    "agent-444": {"tx_count": 15, "disputes": 1, "age_days": 45, "counterparty_diversity": 7},
+}
